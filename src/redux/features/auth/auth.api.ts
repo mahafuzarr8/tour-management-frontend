@@ -1,7 +1,7 @@
 import { baseApi } from "@/redux/baseApi";
 import type { IResponse, ISendOtp, IVerifyOtp } from "@/types";
 
-const authApi = baseApi.injectEndpoints({
+export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation({
       query: (userInfo) => ({
@@ -9,6 +9,13 @@ const authApi = baseApi.injectEndpoints({
         method: "POST",
         data: userInfo,
       }),
+    }),
+    logout: builder.mutation({
+      query: () => ({
+        url: "/auth/logout",
+        method: "POST",
+      }),
+      invalidatesTags: ["USER"],
     }),
     register: builder.mutation({
       query: (userInfo) => ({
@@ -26,10 +33,17 @@ const authApi = baseApi.injectEndpoints({
     }),
     verifyOtp: builder.mutation<IResponse<null>, IVerifyOtp>({
       query: (userInfo) => ({
-        url: "/otp/send",
+        url: "/otp/verify",
         method: "POST",
         data: userInfo,
       }),
+    }),
+    userInfo: builder.query({
+      query: () => ({
+        url: "/user/me",
+        method: "GET",
+      }),
+      providesTags: ["USER"],
     }),
   }),
 });
@@ -37,6 +51,8 @@ const authApi = baseApi.injectEndpoints({
 export const {
   useRegisterMutation,
   useLoginMutation,
+  useLogoutMutation,
   useSendOtpMutation,
   useVerifyOtpMutation,
+  useUserInfoQuery,
 } = authApi;
